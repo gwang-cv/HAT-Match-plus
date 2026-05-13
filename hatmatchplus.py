@@ -8,10 +8,6 @@ from loss import batch_episym
 from einops import rearrange
 
 
-# ====================================================================
-# Shared utility modules (same as HAT-Match)
-# ====================================================================
-
 class FourierPositionEncoding(nn.Module):
     def __init__(self, num_freqs=8):
         super().__init__()
@@ -162,10 +158,6 @@ def build_graph_feature(x, knn_idx):
     return edge.permute(0, 3, 1, 2).contiguous()  # (B, 2C, N, k)
 
 
-# ====================================================================
-# Module 1: SA+ (Geometry-Biased Multi-Head Attention)
-# ====================================================================
-
 class GeometryBiasedAttention(nn.Module):
     """
     Replaces original LCT (Self-Attention).
@@ -278,10 +270,6 @@ class SA_Plus_Block(nn.Module):
         return x + self.ffn(x)
 
 
-# ====================================================================
-# Module 2: CSCA (Channel-Spatial Coupled Attention)
-# ====================================================================
-
 class CSCA(nn.Module):
     """
     Replaces original SEAttention.
@@ -326,10 +314,6 @@ class CSCA(nn.Module):
         out = x * ch_w * sp_w
         return out + self.ffn(out)
 
-
-# ====================================================================
-# Module 3: MGA (Multi-hop Graph Attention)
-# ====================================================================
 
 class MGA_Block(nn.Module):
     """
@@ -388,10 +372,6 @@ class MGA_Block(nn.Module):
         return out
 
 
-# ====================================================================
-# Module 4: MCA (Motion Consistency Attention) — NEW
-# ====================================================================
-
 class MotionConsistencyAttention(nn.Module):
     """
     Novel attention mechanism exploiting the geometric prior that
@@ -445,10 +425,6 @@ class MotionConsistencyAttention(nn.Module):
         out = gate_val * x + (1.0 - gate_val) * agg
         return out + self.ffn(out)
 
-
-# ====================================================================
-# Module 5: VCA (View Cross-Attention) — NEW
-# ====================================================================
 
 class ViewCrossAttention(nn.Module):
     """
@@ -514,10 +490,6 @@ class ViewCrossAttention(nn.Module):
         return merged + x
 
 
-# ====================================================================
-# Adaptive Gate Fusion
-# ====================================================================
-
 class AdaptiveGateFusion(nn.Module):
     """Fuses outputs of SA+, CSCA, MCA with per-point learned gates."""
     def __init__(self, channels, num_branches=3):
@@ -534,10 +506,6 @@ class AdaptiveGateFusion(nn.Module):
         out = sum(weights[:, i:i+1] * features[i] for i in range(len(features)))
         return self.proj(out)
 
-
-# ====================================================================
-# CL_Block_Plus: Enhanced CL_Block with EHAB
-# ====================================================================
 
 class CL_Block_Plus(nn.Module):
     def __init__(self, initial=False, predict=False, out_channel=128, k_num=9, sampling_rate=0.5, clusters=500, use_fourier=False, ablate_depth=0):
@@ -693,10 +661,6 @@ class CL_Block_Plus(nn.Module):
             return x_ds, y_ds, [w0, w1, w2[:, 0, :, 0]], [w0_ds, w1_ds], e_hat
 
 
-# ====================================================================
-# HATNetPlus: Top-level network
-# ====================================================================
-
 class HATNetPlus(nn.Module):
     def __init__(self, config):
         super().__init__()
@@ -736,10 +700,6 @@ class HATNetPlus(nn.Module):
 
         return ws0 + ws1, [y, y, y1, y1, y2], [e_hat], y_hat
 
-
-# ====================================================================
-# Weighted 8-point algorithm (same as HAT-Match)
-# ====================================================================
 
 def batch_symeig(X):
     device = X.device
