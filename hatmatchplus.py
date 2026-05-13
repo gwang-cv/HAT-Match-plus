@@ -1,14 +1,4 @@
-"""
-HAT-Match+: Enhanced Hybrid Attention Transformer for Two-View Correspondence Pruning
-Journal version (IEEE TPAMI) extending HAT-Match (ECAI 2025)
-
-Key improvements over HAT-Match:
-  1. SA+  : Geometry-Biased Multi-Head Attention (replaces LCT)
-  2. CSCA : Channel-Spatial Coupled Attention (replaces SEAttention)
-  3. MGA  : Multi-hop Graph Attention (replaces GG_Block)
-  4. MCA  : Motion Consistency Attention (NEW)
-  5. VCA  : View Cross-Attention (NEW)
-"""
+"""HAT-Match++"""
 
 import math
 import torch
