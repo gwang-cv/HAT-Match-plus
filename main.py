@@ -1,6 +1,3 @@
-# HAT-Match+: Enhanced Hybrid Attention Transformer for Correspondence Pruning
-# Journal version for IEEE TPAMI
-
 from config import get_config, print_usage
 config, unparsed = get_config()
 import os
